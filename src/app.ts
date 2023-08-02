@@ -9,6 +9,7 @@ const host = "0.0.0.0";
 
 
 import indexRouter from "./routes/index";
+import healthcheckRouter from "./routes/healthcheck";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use('/', indexRouter);
+app.use('/', healthcheckRouter);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   next(createError(404));
