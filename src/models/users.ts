@@ -1,7 +1,7 @@
 import mongoose, {Schema, Document} from "mongoose";
 import bcrypt from 'bcrypt';
 
-interface IUser extends Document {
+export interface IUser extends Document {
     _id: Schema.Types.ObjectId,
     email: string,
     password: string,
@@ -16,7 +16,7 @@ interface IUser extends Document {
     isAdmin: boolean
 }
 
-const UserSchema = new Schema({
+const UserSchema = new Schema<IUser>({
     _id: {
         type: Schema.Types.ObjectId,
     },
@@ -77,6 +77,5 @@ UserSchema.pre<IUser>('save', async function (next){
     next();
 })
 
-const User = mongoose.model<IUser>('Users', UserSchema);
+export const User = mongoose.model<IUser>('Users', UserSchema);
 
-export default User;

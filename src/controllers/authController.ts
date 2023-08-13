@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
-import User from "../models/users";
+import {User} from "../models/users";
 import { Request, Response } from "express";
+import {sign} from "jsonwebtoken";
+import bcrypt from 'bcrypt';
 
 export const register = async (req: Request, res: Response) => {
     try{
@@ -53,7 +55,33 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
     try{
+        const {email, password} = req.body;
+        const user = await User.findOne({email});
 
+        if(!user){
+            return res.status(401).json({message: "Email or password incorrect!"});
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if(!isPasswordValid){
+            return res.status(401).json({message: 'Email or password incorrect!'});
+        }
+
+        const token = sign({
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            phone: user.phone,
+            isAdmin: user.isAdmin
+        }, process.env.JWT_SECRET, {
+            expiresIn: '2h'
+        });
+
+        return res.cookie('access-token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production'
+        }).status(200).json({message: "User logged in successfully!"});
     }catch(error){
         console.log(error);
         return res.status(500).json({message: "Internal Server Error!"});
