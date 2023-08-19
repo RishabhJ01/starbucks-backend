@@ -12,8 +12,7 @@ export interface IUser extends Document {
     city: string,
     state: string,
     country: string,
-    postalCode: string,
-    isAdmin: boolean
+    postalCode: string
 }
 
 const UserSchema = new Schema<IUser>({
@@ -60,10 +59,6 @@ const UserSchema = new Schema<IUser>({
     postalCode:{
         type: String,
         required: true,
-    },
-    isAdmin: {
-        type: Boolean,
-        default: false,
     }
 }, {timestamps: true});
 

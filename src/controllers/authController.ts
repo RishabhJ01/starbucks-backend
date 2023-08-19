@@ -18,11 +18,6 @@ export const register = async (req: Request, res: Response) => {
             country,
             postalCode
         } = req.body;
-
-        let isAdmin: boolean = false;
-        if(req.body.isAdmin){
-            isAdmin = req.body.isAdmin;
-        }
         
         const existingUser = await User.findOne({email});
         if (existingUser){
@@ -40,8 +35,7 @@ export const register = async (req: Request, res: Response) => {
             city,
             state,
             country,
-            postalCode,
-            isAdmin
+            postalCode
         });
 
         await newUser.save();
@@ -72,16 +66,16 @@ export const login = async (req: Request, res: Response) => {
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
-            phone: user.phone,
-            isAdmin: user.isAdmin
+            phone: user.phone
         }, process.env.JWT_SECRET, {
             expiresIn: '2h'
         });
 
-        return res.cookie('access-token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production'
-        }).status(200).json({message: "User logged in successfully!"});
+        return res
+        .cookie("access-token", token)
+        .status(200).json({
+            message: "User logged in successfully!"
+        })
     }catch(error){
         console.log(error);
         return res.status(500).json({message: "Internal Server Error!"});
