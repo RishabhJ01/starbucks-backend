@@ -1,10 +1,9 @@
 import {Router} from "express";
-import {register, login} from "../../controllers/authController"
-
+import { addValues } from "../../controllers/optionController";
 const router = Router();
 
-// auth routes
-router.post('/register', register);
-router.post('/login', login)
+//option routes
+router.post('/addvalues', addValues);
 
 export default router;
+

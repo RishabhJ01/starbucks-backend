@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 dotenv.config();
-const port = 8080;
+const port = 8081;
 const host = "0.0.0.0";
 
 import indexRouter from "./routes/index";

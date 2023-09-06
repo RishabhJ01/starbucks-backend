@@ -1,12 +1,11 @@
 import mongoose, {Schema, Document} from "mongoose";
 
-export interface IOption extends Document{
+export interface IValue extends Document{
     _id: Schema.Types.ObjectId,
-    name: string,
-    values: object
+    name: string
 }
 
-const OptionSchema = new Schema<IOption>({
+const ValueSchema = new Schema<IValue>({
     _id: {
         type: Schema.Types.ObjectId
     },
@@ -14,8 +13,7 @@ const OptionSchema = new Schema<IOption>({
         type: String,
         required: true,
         unique: true,
-    },
-    values: []
+    }
 }, {timestamps: true});
 
-export const Option = mongoose.model<IOption>('Option', OptionSchema)
+export const Value = mongoose.model<IValue>('Value', ValueSchema)
