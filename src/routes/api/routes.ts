@@ -1,9 +1,11 @@
 import {Router} from "express";
-import { addValues } from "../../controllers/optionController";
+import { addOptions,getAllOptions,updateOption } from "../../controllers/optionController";
 const router = Router();
 
 //option routes
-router.post('/addvalues', addValues);
+router.post('/addoptions', addOptions);
+router.get('/getalloptions', getAllOptions);
+router.put("/updateoption/:id", updateOption)
 
 export default router;
 

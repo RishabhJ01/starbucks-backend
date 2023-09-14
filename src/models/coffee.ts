@@ -1,9 +1,15 @@
 import mongoose, {Schema, Document} from "mongoose";
+import {IOption} from "./options"
 
+export interface IRecipe extends Document{
+    option: Schema.Types.ObjectId,
+    value: Schema.Types.ObjectId,
+}
 export interface ICoffee extends Document{
     _id: Schema.Types.ObjectId,
     name: String,
-    options: object
+    recipe: Array<IRecipe>,
+    optionList: Array<Object>
 }
 
 const CoffeeSchema = new Schema<ICoffee>({
@@ -14,13 +20,14 @@ const CoffeeSchema = new Schema<ICoffee>({
         type: String,
         require: true,
     },
-    options: [
+    recipe: [],
+    optionList: [
         {
-            optionName: {
-                type: String
+            category: {
+                type: String,
             },
-            values: {
-                type: String
+            options: {
+
             }
         }
     ]
