@@ -3,12 +3,13 @@ import createError from "http-errors";
 import logger from 'morgan';
 import cookieParser from "cookie-parser";
 import { resolve } from 'path';
-import dotenv from "dotenv";
+import {config} from "dotenv";
 import mongoose from "mongoose";
 
-dotenv.config();
+config();
 const port = 8080;
 const host = "0.0.0.0";
+const MONGO_URI: string = process.env.MONGO_URI || ""
 
 import indexRouter from "./routes/index";
 import healthcheckRouter from "./routes/healthcheck";
@@ -18,7 +19,7 @@ const app = express();
 
 app.set('views', resolve('./views'));
 app.set('view engine', 'ejs');
-mongoose.connect(process.env.MONGO_URI).then(() => {
+mongoose.connect(MONGO_URI).then(() => {
   console.log("database connected!");
 }).catch((err: Error) => {
   throw err;
@@ -32,11 +33,11 @@ app.use('/', indexRouter);
 app.use('/', healthcheckRouter);
 app.use('/', apiRouter);
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((next: NextFunction) => {
   next(createError(404));
 })
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(500);

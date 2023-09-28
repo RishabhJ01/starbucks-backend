@@ -4,6 +4,8 @@ import { Request, Response } from "express";
 import {sign} from "jsonwebtoken";
 import bcrypt from 'bcrypt';
 
+const secret: string = process.env.JWT_SECRET || "";
+
 export const register = async (req: Request, res: Response) => {
     try{
         const {
@@ -67,8 +69,8 @@ export const login = async (req: Request, res: Response) => {
             first_name: user.first_name,
             last_name: user.last_name,
             phone: user.phone
-        }, process.env.JWT_SECRET, {
-            expiresIn: '2h'
+        }, secret, {
+            expiresIn: "2h"
         });
 
         return res
