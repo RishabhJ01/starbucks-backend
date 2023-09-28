@@ -4,28 +4,29 @@ import * as jwt from 'jsonwebtoken';
 
 const secret: string = process.env.JWT_SECRET || "";
 
-export const handleJwt = async (req: Request, res: Response, next: NextFunction) => {
+export const handleJwt = async (_req: Request, _res: Response, next: NextFunction) => {
     try{
-        const token: string = req.cookies['access-token'];
+        const token:string = _req.cookies['access-token'];
         const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
-        const data:any = await User.find({email: decoded.email});
+        const data:IUser|null = await User.findOne({email: decoded.email});
         
-        if(data.length === 0){
-            res.status(401).json({message: "Unauthorized!"});
+        if(data === null){
+            _res.status(401).json({message: "Unauthorized!"});
             return;
         }
-        const user:IUser = data[0]
-        if((user.first_name !== decoded.first_name) || (user.last_name !== decoded.last_name) || (user.phone !== decoded.phone)){
-            res.status(401).json({message: "Unauthorized"});
+        if((data?.first_name !== decoded.first_name) || (data?.last_name !== decoded.last_name) || (data?.phone !== decoded.phone)){
+            _res.status(401).json({message: "Unauthorized"})
             return;
         }
+        _res.locals.user = data;
         next();
     }catch(err){
         if(err.name === "TokenExpiredError"){
-            res.status(401).json({message: "Session Expired!"});
+            _res.status(401).json({message: "Session Expired!"});
             return;
         }
-        res.status(500).json({message: "Internal server error!"});
+        console.log(err);
+        _res.status(500).json({message: "Internal server error!"});
         return;
     }
 }

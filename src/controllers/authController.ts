@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 
 const secret: string = process.env.JWT_SECRET || "";
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (_req: Request, _res: Response) => {
     try{
         const {
             email,
@@ -19,11 +19,12 @@ export const register = async (req: Request, res: Response) => {
             state,
             country,
             postalCode
-        } = req.body;
+        } = _req.body;
         
         const existingUser = await User.findOne({email});
         if (existingUser){
-            return res.status(409).json({message: "User already exists!"});
+            _res.status(409).json({message: "User already exists!"});
+            return;
         }
 
         const newUser = new User({
@@ -42,26 +43,26 @@ export const register = async (req: Request, res: Response) => {
 
         await newUser.save();
 
-        return res.status(201).json({message: "User registered successfully!"});
+        return _res.status(201).json({message: "User registered successfully!"});
     }catch(error){
         console.log(error);
-        return res.status(500).json({message: "Internal Server Error!"});
+        return _res.status(500).json({message: "Internal Server Error!"});
     }
 }
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (_req: Request, _res: Response) => {
     try{
-        const {email, password} = req.body;
+        const {email, password} = _req.body;
         const user = await User.findOne({email});
 
         if(!user){
-            return res.status(401).json({message: "Email or password incorrect!"});
+            return _res.status(401).json({message: "Email or password incorrect!"});
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if(!isPasswordValid){
-            return res.status(401).json({message: 'Email or password incorrect!'});
+            return _res.status(401).json({message: 'Email or password incorrect!'});
         }
 
         const token = sign({
@@ -73,13 +74,15 @@ export const login = async (req: Request, res: Response) => {
             expiresIn: "2h"
         });
 
-        return res
+        return _res
         .cookie("access-token", token)
         .status(200).json({
             message: "User logged in successfully!"
         })
+
     }catch(error){
         console.log(error);
-        return res.status(500).json({message: "Internal Server Error!"});
+        _res.status(500).json({message: "Internal Server Error!"});
+        return;
     }
 }
