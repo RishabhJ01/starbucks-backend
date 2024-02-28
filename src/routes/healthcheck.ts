@@ -1,8 +1,8 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response} from "express";
 
 const router = Router();
 
-router.get('/healthcheck', (req: Request, res: Response, next: NextFunction) => {
+router.get('/healthcheck', (_req: Request, _res: Response) => {
     const healthcheck = {
         uptime: process.uptime(),
         message: 'OK',
@@ -10,10 +10,12 @@ router.get('/healthcheck', (req: Request, res: Response, next: NextFunction) => 
     };
 
     try{
-        return res.status(200).json(healthcheck);
+        _res.status(200).json(healthcheck);
+        return;
     }catch(err){
         healthcheck.message = err;
-        res.status(503).json(healthcheck);
+        _res.status(503).json(healthcheck);
+        return;
     }
 })
 
